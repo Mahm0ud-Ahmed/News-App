@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/modle/nav_model.dart';
+import 'package:flutter_app/screen/headline_news.dart';
+import 'package:flutter_app/screen/home_screen.dart';
+import 'package:flutter_app/screen/instegram_feeds.dart';
+import 'package:flutter_app/screen/twitter_feeds.dart';
 
 class NavigatorDrawer extends StatelessWidget {
-  List<String> title = [
-    'Explore',
-    'Headline News',
-    'Read Later',
-    'Videos',
-    'Photos',
-    'Setting',
-    'Logout',
+  List<NavDrawerModel> title = [
+    NavDrawerModel(
+      title: 'Explore',
+      getObj: () => HomeScreen(),
+    ),
+    NavDrawerModel(
+      title: 'Headline News',
+      getObj: () => HeadlineNews(),
+    ),
+    NavDrawerModel(
+      title: 'Twitter',
+      getObj: () => TwitterFeeds(),
+    ),
+    NavDrawerModel(
+      title: 'Instegram Feeds',
+      getObj: () => InstegramFeeds(),
+    ),
   ];
 
   @override
@@ -20,9 +34,17 @@ class NavigatorDrawer extends StatelessWidget {
           itemBuilder: (context, position) {
             return ListTile(
               title: Text(
-                title[position],
+                title[position].title,
               ),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return title[position].getObj();
+                  }),
+                );
+              },
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 10,

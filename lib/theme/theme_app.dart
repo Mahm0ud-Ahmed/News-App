@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ThemeApp {
   static ThemeData themeData = new ThemeData(
-    primarySwatch: Colors.red,
+    primaryColor: Colors.red.shade800,
     accentColor: Colors.purple,
   );
 }
