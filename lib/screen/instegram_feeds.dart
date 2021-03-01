@@ -23,6 +23,7 @@ class _InstegramFeedsState extends State<InstegramFeeds> {
       body: ListView.builder(
         itemBuilder: (context, position) {
           return Card(
+            elevation: 5,
             margin: EdgeInsets.fromLTRB(8, 8, 8, 4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,14 +42,14 @@ class _InstegramFeedsState extends State<InstegramFeeds> {
 
   Widget _headerCard() {
     return Padding(
-      padding: const EdgeInsets.only(top: 16, right: 16, left: 16, bottom: 4),
+      padding: const EdgeInsets.only(top: 16, right: 4, left: 16, bottom: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 12),
+                padding: const EdgeInsets.only(right: 10),
                 child: CircleAvatar(
                   backgroundImage: ExactAssetImage(
                     'assets/images/im5.jpg',
@@ -69,37 +70,47 @@ class _InstegramFeedsState extends State<InstegramFeeds> {
                       ),
                       Text(
                         '@ch_meyers',
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
                   SizedBox(
                     height: 8,
                   ),
-                  Text('Fri, 12 May 2017 • 14.30'),
+                  Text(
+                    'Fri, 12 May 2017 • 14.30',
+                    style: TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
                 ],
               )
             ],
           ),
-          Row(
-            children: [
-              IconButton(
-                icon: Icon(
-                  Icons.favorite,
-                  color: Colors.grey.shade400,
-                ),
-                onPressed: () {},
-              ),
-              Transform.translate(
-                offset: Offset(-8, 0),
-                child: Text(
-                  '25',
-                  style: TextStyle(
-                    fontSize: 12,
+          Expanded(
+            child: Row(
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.favorite,
                     color: Colors.grey.shade400,
                   ),
+                  onPressed: () {},
                 ),
-              ),
-            ],
+                Transform.translate(
+                  offset: Offset(-8, 0),
+                  child: Text(
+                    '100',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade400,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

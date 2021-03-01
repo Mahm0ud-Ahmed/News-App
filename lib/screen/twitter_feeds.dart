@@ -23,6 +23,7 @@ class _TwitterFeedsState extends State<TwitterFeeds> {
       body: ListView.builder(
         itemBuilder: (context, position) {
           return Card(
+            elevation: 5,
             margin: EdgeInsets.fromLTRB(8, 8, 8, 4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
