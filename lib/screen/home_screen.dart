@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/api/data_post_jsonplaceholder.dart';
+import 'package:flutter_app/screen/about.dart';
+import 'package:flutter_app/screen/contact.dart';
+import 'package:flutter_app/screen/help.dart';
+import 'package:flutter_app/screen/setting.dart';
 import 'package:flutter_app/screen/tabs/favourite.dart';
 import 'package:flutter_app/screen/tabs/popular.dart';
 import 'package:flutter_app/utilities/nav_drawer.dart';
@@ -9,6 +13,8 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
+
+enum PopupMenuList { About, Contact, Help, Setting }
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
@@ -32,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen>
             icon: Icon(Icons.search),
             onPressed: () {},
           ),
-          DropdownButton(items: [], onChanged: null),
+          _buildPopupMenu(),
         ],
         bottom: TabBar(
           controller: _controller,
@@ -60,5 +66,71 @@ class _HomeScreenState extends State<HomeScreen>
         controller: _controller,
       ),
     );
+  }
+
+  Widget _buildPopupMenu() {
+    return PopupMenuButton<PopupMenuList>(
+      itemBuilder: (BuildContext context) {
+        return <PopupMenuEntry<PopupMenuList>>[
+          const PopupMenuItem<PopupMenuList>(
+            value: PopupMenuList.Setting,
+            child: Text('Setting'),
+          ),
+          const PopupMenuItem<PopupMenuList>(
+            value: PopupMenuList.Contact,
+            child: Text('Contact'),
+          ),
+          const PopupMenuItem<PopupMenuList>(
+            value: PopupMenuList.Help,
+            child: Text('Help'),
+          ),
+          const PopupMenuItem<PopupMenuList>(
+            value: PopupMenuList.About,
+            child: Text('About'),
+          ),
+        ];
+      },
+      onSelected: (PopupMenuList menu) {
+        switch (menu) {
+          case PopupMenuList.About:
+            return _navPage(
+              context,
+              About(),
+            );
+          case PopupMenuList.Contact:
+            return _navPage(
+              context,
+              Contact(),
+            );
+          case PopupMenuList.Help:
+            return _navPage(
+              context,
+              Help(),
+            );
+          case PopupMenuList.Setting:
+            return _navPage(
+              context,
+              Setting(),
+            );
+        }
+      },
+    );
+  }
+
+  Widget _navPage(BuildContext context, dynamic obj) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return obj;
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

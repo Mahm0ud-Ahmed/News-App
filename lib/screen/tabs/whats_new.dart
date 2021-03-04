@@ -1,7 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/api/data_news_api.dart';
 import 'package:flutter_app/model/news_api_model.dart';
-import 'package:flutter_app/model/news_sources_model.dart';
 import 'package:flutter_app/utilities/extenion.dart';
 
 class WhatsNew extends StatefulWidget {
@@ -34,37 +35,72 @@ class _WhatsNewState extends State<WhatsNew> {
       margin: EdgeInsets.only(bottom: 8),
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height * 0.25,
-      color: Colors.black,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 64, right: 64),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'How Terriers & Royals Gatecrashed Final',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 12,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
+      child: FutureBuilder(
+        future: newsApi.fetchAllDataTopStories(country: 'us'),
+        // ignore: missing_return
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return connectionError();
+            case ConnectionState.waiting:
+              return loading();
+            case ConnectionState.active:
+              return loading();
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                return errorInData(snapshot.error);
+              } else {
+                if (snapshot.hasData) {
+                  List<NewsTopHeadlinesModel> topModel = snapshot.data;
+                  NewsTopHeadlinesModel model =
+                      topModel[Random.secure().nextInt(topModel.length)];
+                  return Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(model.urlToImage),
+                      ),
+                    ),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 64, right: 64),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              model.title,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              model.description,
+                              style: TextStyle(
+                                color: Colors.lime,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 3,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                } else {
+                  noData();
+                }
+              }
+          }
+        },
       ),
     );
   }
@@ -117,7 +153,7 @@ class _WhatsNewState extends State<WhatsNew> {
                             _buildDivider(),
                             _topStoriesItem(model[1]),
                             _buildDivider(),
-                            _topStoriesItem(model[2]),
+                            _topStoriesItem(model[3]),
                           ],
                         );
                       }
@@ -146,7 +182,7 @@ class _WhatsNewState extends State<WhatsNew> {
               height: MediaQuery.of(context).size.height * 0.11,
               child: Image.network(
                 model.urlToImage,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
           ),

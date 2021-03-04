@@ -30,10 +30,6 @@ class _HeadlineNewsState extends State<HeadlineNews>
             icon: Icon(Icons.search),
             onPressed: () {},
           ),
-          IconButton(
-            icon: Icon(Icons.more_vert),
-            onPressed: () {},
-          )
         ],
         bottom: TabBar(
           controller: _controller,
@@ -61,5 +57,10 @@ class _HeadlineNewsState extends State<HeadlineNews>
         controller: _controller,
       ),
     );
+  }
+
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

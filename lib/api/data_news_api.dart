@@ -10,7 +10,7 @@ class DataNewsApi {
     final String path =
         base_url_news_api + top_headlines + countryName + country + api_key;
     var response = await http.get(path);
-    List<NewsTopHeadlinesModel> list = List<NewsTopHeadlinesModel>();
+    List<NewsTopHeadlinesModel> list = <NewsTopHeadlinesModel>[];
     if (response.statusCode == 200) {
       var jsonDecode = json.jsonDecode(response.body);
       var articles = jsonDecode["articles"];
@@ -33,7 +33,7 @@ class DataNewsApi {
   Future<List<NewsSourcesModel>> fetchAllDataSources() async {
     final String path = base_url_news_api + sources + api_key;
     var response = await http.get(path);
-    List<NewsSourcesModel> list = List<NewsSourcesModel>();
+    List<NewsSourcesModel> list = <NewsSourcesModel>[];
     if (response.statusCode == 200) {
       var jsonDecode = json.jsonDecode(response.body);
       var articles = jsonDecode["sources"];
