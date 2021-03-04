@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/modle/nav_model.dart';
+import 'package:flutter_app/model/nav_model.dart';
 import 'package:flutter_app/screen/headline_news.dart';
 import 'package:flutter_app/screen/home_screen.dart';
 import 'package:flutter_app/screen/instegram_feeds.dart';

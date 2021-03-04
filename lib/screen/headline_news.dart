@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/tabs/favourite.dart';
-import 'package:flutter_app/tabs/popular.dart';
+import 'package:flutter_app/screen/tabs/favourite.dart';
+import 'package:flutter_app/screen/tabs/popular.dart';
 import 'package:flutter_app/utilities/nav_drawer.dart';
 
 class HeadlineNews extends StatefulWidget {

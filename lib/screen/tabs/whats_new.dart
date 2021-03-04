@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/api/data_news_api.dart';
+import 'package:flutter_app/model/news_api_model.dart';
+import 'package:flutter_app/model/news_sources_model.dart';
+import 'package:flutter_app/utilities/extenion.dart';
 
 class WhatsNew extends StatefulWidget {
   @override
@@ -6,6 +10,8 @@ class WhatsNew extends StatefulWidget {
 }
 
 class _WhatsNewState extends State<WhatsNew> {
+  DataNewsApi newsApi = DataNewsApi();
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -84,21 +90,51 @@ class _WhatsNewState extends State<WhatsNew> {
         Card(
           margin: EdgeInsets.all(8),
           elevation: 5,
-          child: Column(
-            children: [
-              _topStoriesItem('assets/images/im4.jpg'),
-              _buildDivider(),
-              _topStoriesItem('assets/images/im5.jpg'),
-              _buildDivider(),
-              _topStoriesItem('assets/images/im6.jpg'),
-            ],
+          child: FutureBuilder(
+            future: newsApi.fetchAllDataTopStories(country: 'us'),
+            // ignore: missing_return
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return connectionError();
+                  break;
+                case ConnectionState.waiting:
+                  return loading();
+                  break;
+                case ConnectionState.active:
+                  return loading();
+                  break;
+                case ConnectionState.done:
+                  if (snapshot.hasError) {
+                    return errorInData(snapshot.error);
+                  } else {
+                    if (snapshot.hasData) {
+                      List<NewsTopHeadlinesModel> model = snapshot.data;
+                      if (model.length >= 3) {
+                        return Column(
+                          children: [
+                            _topStoriesItem(model[0]),
+                            _buildDivider(),
+                            _topStoriesItem(model[1]),
+                            _buildDivider(),
+                            _topStoriesItem(model[2]),
+                          ],
+                        );
+                      }
+                    } else {
+                      return noData();
+                    }
+                  }
+                  break;
+              }
+            },
           ),
         ),
       ],
     );
   }
 
-  Widget _topStoriesItem(String imgPath) {
+  Widget _topStoriesItem(NewsTopHeadlinesModel model) {
     return Padding(
       padding: const EdgeInsets.all(14.0),
       child: Row(
@@ -108,9 +144,9 @@ class _WhatsNewState extends State<WhatsNew> {
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.25,
               height: MediaQuery.of(context).size.height * 0.11,
-              child: Image(
-                image: ExactAssetImage(imgPath),
-                fit: BoxFit.fill,
+              child: Image.network(
+                model.urlToImage,
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -119,7 +155,7 @@ class _WhatsNewState extends State<WhatsNew> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'The World Global Warming Annual Summit',
+                  model.title,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
@@ -135,9 +171,9 @@ class _WhatsNewState extends State<WhatsNew> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Michael Adams',
+                        model.author,
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           color: Colors.grey,
                         ),
                       ),
@@ -177,44 +213,61 @@ class _WhatsNewState extends State<WhatsNew> {
   }
 
   Widget _buildRecentUpdate() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 20,
-            top: 20,
-          ),
-          child: Text(
-            'Recent Updates',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade700,
-              fontSize: 14,
-            ),
-          ),
-        ),
-        _recentUpdateItem(
-          imgPath: 'assets/images/im7.jpg',
-          color: Colors.deepOrange.shade700,
-          textHeader: 'SPORT',
-          textBody: 'Vettel is Ferrari Number One - Hamilton',
-        ),
-        _recentUpdateItem(
-          imgPath: 'assets/images/im8.jpg',
-          color: Colors.lime.shade700,
-          textHeader: 'LIFESTYLE',
-          textBody: 'The City in Pakistan that Loves a British Hairstyles',
-        ),
-        SizedBox(
-          height: 20,
-        ),
-      ],
+    return FutureBuilder(
+      future: newsApi.fetchAllDataTopStories(country: 'us'),
+      // ignore: missing_return
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return connectionError();
+            break;
+          case ConnectionState.waiting:
+            return loading();
+            break;
+          case ConnectionState.active:
+            return loading();
+            break;
+          case ConnectionState.done:
+            if (snapshot.hasError) {
+              return errorInData(snapshot.error);
+            } else {
+              if (snapshot.hasData) {
+                List<NewsTopHeadlinesModel> sources = snapshot.data;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 20,
+                        top: 20,
+                      ),
+                      child: Text(
+                        'Recent Updates',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    _recentUpdateItem(sources[0], Colors.deepOrange.shade700),
+                    _recentUpdateItem(sources[1], Colors.lime.shade700),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                );
+              } else {
+                return noData();
+              }
+            }
+            break;
+        }
+      },
     );
   }
 
-  Widget _recentUpdateItem(
-      {String imgPath, Color color, String textHeader, String textBody}) {
+  Widget _recentUpdateItem(NewsTopHeadlinesModel topModel, Color color) {
     return Card(
       margin: EdgeInsets.all(8),
       elevation: 5,
@@ -225,9 +278,7 @@ class _WhatsNewState extends State<WhatsNew> {
             width: double.infinity,
             height: MediaQuery.of(context).size.height * 0.20,
             child: Image(
-              image: ExactAssetImage(
-                imgPath,
-              ),
+              image: NetworkImage(topModel.urlToImage),
               fit: BoxFit.fill,
             ),
           ),
@@ -240,7 +291,7 @@ class _WhatsNewState extends State<WhatsNew> {
               borderRadius: BorderRadius.circular(3),
             ),
             child: Text(
-              textHeader,
+              topModel.author,
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.white,
@@ -252,7 +303,7 @@ class _WhatsNewState extends State<WhatsNew> {
           Padding(
             padding: const EdgeInsets.only(left: 8, top: 4),
             child: Text(
-              textBody,
+              topModel.title,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,

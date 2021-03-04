@@ -91,6 +91,7 @@ class _InstegramFeedsState extends State<InstegramFeeds> {
           ),
           Expanded(
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
                   icon: Icon(

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/tabs/favourite.dart';
-import 'package:flutter_app/tabs/popular.dart';
-import 'package:flutter_app/tabs/whats_new.dart';
+import 'package:flutter_app/api/data_post_jsonplaceholder.dart';
+import 'package:flutter_app/screen/tabs/favourite.dart';
+import 'package:flutter_app/screen/tabs/popular.dart';
 import 'package:flutter_app/utilities/nav_drawer.dart';
+import 'tabs/whats_new.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -31,10 +32,7 @@ class _HomeScreenState extends State<HomeScreen>
             icon: Icon(Icons.search),
             onPressed: () {},
           ),
-          IconButton(
-            icon: Icon(Icons.more_vert),
-            onPressed: () {},
-          )
+          DropdownButton(items: [], onChanged: null),
         ],
         bottom: TabBar(
           controller: _controller,
