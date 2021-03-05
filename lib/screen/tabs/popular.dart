@@ -1,6 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/api/data_news_api.dart';
+import 'package:flutter_app/model/news_api_model.dart';
+import 'package:flutter_app/utilities/extenion.dart';
 
 class Popular extends StatefulWidget {
   @override
@@ -14,19 +17,45 @@ List<String> imgPath = [
 ];
 
 class _PopularState extends State<Popular> {
+  DataNewsApi newsApi = DataNewsApi();
+  int length = 0;
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemBuilder: (context, position) {
-        return Card(
-          child: _topStoriesItem(_returnRandom()),
-        );
+    return FutureBuilder(
+      future: newsApi.fetchAllDataTopStories(country: 'us'),
+// ignore: missing_return
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return connectionError();
+          case ConnectionState.waiting:
+            return loading();
+          case ConnectionState.active:
+            return loading();
+          case ConnectionState.done:
+            if (snapshot.hasError) {
+              return errorInData(snapshot.error);
+            } else {
+              if (snapshot.hasData) {
+                List<NewsTopHeadlinesModel> dataModel = snapshot.data;
+                return ListView.builder(
+                  itemBuilder: (context, position) {
+                    return Card(
+                      child: _topStoriesItem(dataModel[position]),
+                    );
+                  },
+                  itemCount: dataModel.length,
+                );
+              } else {
+                return noData();
+              }
+            }
+        }
       },
-      itemCount: 20,
     );
   }
 
-  Widget _topStoriesItem(String imgPath) {
+  Widget _topStoriesItem(NewsTopHeadlinesModel model) {
     return Padding(
       padding: const EdgeInsets.all(14.0),
       child: Row(
@@ -37,7 +66,7 @@ class _PopularState extends State<Popular> {
               width: MediaQuery.of(context).size.width * 0.25,
               height: MediaQuery.of(context).size.height * 0.11,
               child: Image(
-                image: ExactAssetImage(imgPath),
+                image: NetworkImage(model.urlToImage),
                 fit: BoxFit.fill,
               ),
             ),
@@ -47,7 +76,7 @@ class _PopularState extends State<Popular> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'The World Global Warming Annual Summit',
+                  model.title,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
@@ -63,9 +92,9 @@ class _PopularState extends State<Popular> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Michael Adams',
+                        model.author,
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           color: Colors.grey,
                         ),
                       ),
@@ -96,8 +125,10 @@ class _PopularState extends State<Popular> {
     );
   }
 
+  /*
   Random _random = Random();
   String _returnRandom() {
     return imgPath[_random.nextInt(imgPath.length)];
   }
+   */
 }
